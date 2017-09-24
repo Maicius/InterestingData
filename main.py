@@ -7,7 +7,8 @@ from scipy.misc import imread
 import matplotlib.pyplot as plt
 
 def getData():
-    university ="清华大学	北京大学	厦门大学 南京大学	复旦大学	天津大学 浙江大学	南开大学	西安交通大学 东南大学	武汉大学	上海交通大学 山东大学	湖南大学	中国人民大学 吉林大学	重庆大学	电子科技大学 四川大学	中山大学	华南理工大学 兰州大学	东北大学	西北工业大学 哈尔滨工业大学	华中科技大学	中国海洋大学 北京理工大学	大连理工大学	北京航空航天大学 北京师范大学	同济大学	中南大学 中国科学技术大学 中国农业大学	国防科学技术大学	中央民族大学 华东师范大学	西北农林科技大学 北京邮电大学 上海财经大学 西南财经大学 中国政法大学 中央财经大学"
+    # university ="清华大学	北京大学	厦门大学 南京大学	复旦大学	天津大学 浙江大学	南开大学	西安交通大学 东南大学	武汉大学	上海交通大学 山东大学	湖南大学	中国人民大学 吉林大学	重庆大学	电子科技大学 四川大学	中山大学	华南理工大学 兰州大学	东北大学	西北工业大学 哈尔滨工业大学	华中科技大学	中国海洋大学 北京理工大学	大连理工大学	北京航空航天大学 北京师范大学	同济大学	中南大学 中国科学技术大学 中国农业大学	国防科学技术大学	中央民族大学 华东师范大学	西北农林科技大学 北京邮电大学 上海财经大学 西南财经大学 中国政法大学 中央财经大学"
+    university = ""
     data = xlrd.open_workbook('2015年部属高校国家级大学生创新创业训练计划项目名单.xls')
     table = data.sheets()[0]
     nrows = table.nrows
@@ -22,13 +23,21 @@ def getData():
     cost_total = 0
     ministry_cost = 0
     university_cost = 0
+    university_cost_list = []
+    university_cost_dic = {}
+
     for i in range(3, nrows):
         row = table.row_values(i)
         # project_names_str += row[4]
-        print(row[12])
+        # print(row[12])
         cost_total += int(row[11])
         ministry_cost += int(row[12])
         university_cost += int(row[13])
+        if university.find(row[1]) == -1:
+            if row[1] in university_cost_dic:
+                university_cost_dic[row[1]] += int(row[11])
+            else:
+                university_cost_dic[row[1]] = int(row[11])
         # if university.find(row[1]) != -1:
         #     if row[1] in project_num_dic:
         #         project_num_dic[row[1]] += 1
@@ -39,18 +48,40 @@ def getData():
         #         people_num_dic[row[1]] = int(row[7])
         # print(table.row_values(i))
         # print(table.col_values(i))
-    for key in project_num_dic.keys():
-        temp = round(people_num_dic[key] / project_num_dic[key], 2)
-        avg_num_list.append([key, temp])
+    data2 = xlrd.open_workbook('2016年部属高校国家级大学生创新创业训练计划项目名单.xlsx')
+    table = data2.sheets()[1]
+    nrows = table.nrows
+    for i in range(2, nrows):
+        row = table.row_values(i)
+        # project_names_str += row[4]
+        print(row[13])
+        cost_total += int(row[15]) if row[15] != "" else 0
+        ministry_cost += int(row[14]) if row[14] != "" else 0
+        university_cost += int(row[13]) if row[13] != "" else 0
+        if university.find(row[3]) == -1:
+            if row[3] in university_cost_dic:
+                university_cost_dic[row[3]] += int(row[15])
+            else:
+                university_cost_dic[row[3]] = int(row[15])
 
-    for item in project_num_dic.items():
-        project_num_list.append(list(item))
-    for item in people_num_dic.items():
-        people_num_list.append(list(item))
-
-    for i in range (len(project_num_list)):
-        university_list.append([project_num_list[i][0], project_num_list[i][1], people_num_list[i][1], avg_num_list[i][1]])
-
+    for item in university_cost_dic.items():
+        university_cost_list.append(list(item))
+    university_cost_list.sort(key=lambda x:x[1], reverse=True)
+    university_cost_list = university_cost_list[0:40]
+    university_cost_list.sort(key=lambda x: x[1], reverse=False)
+    print(university_cost_list)
+    # for key in project_num_dic.keys():
+    #     temp = round(people_num_dic[key] / project_num_dic[key], 2)
+    #     avg_num_list.append([key, temp])
+    #
+    # for item in project_num_dic.items():
+    #     project_num_list.append(list(item))
+    # for item in people_num_dic.items():
+    #     people_num_list.append(list(item))
+    #
+    # for i in range (len(project_num_list)):
+    #     university_list.append([project_num_list[i][0], project_num_list[i][1], people_num_list[i][1], avg_num_list[i][1]])
+    #
     print([cost_total, ministry_cost, university_cost])
     # word_text = splitWords(project_names_str)
     # drawWordCloud(word_text, 'project_name.png')
