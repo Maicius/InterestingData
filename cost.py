@@ -3,7 +3,7 @@
 import xlrd
 
 def getData():
-    data = xlrd.open_workbook('2017年地方高校国家级大学生创新创业训练计划项目名单.xlsx')
+    data = xlrd.open_workbook('2017年部属高校国家级大学生创新创业训练计划项目名单.xlsx')
     table = data.sheets()[0]
     nrows = table.nrows
     ncols = table.ncols
@@ -16,7 +16,7 @@ def getData():
             project_num_dic[row[1]] += 1
             people_num_dic[row[1]] += int(row[7])
         else:
-            print(row[7])
+            # print(row[7])
             project_num_dic[row[1]] = 1
             people_num_dic[row[1]] = int(row[7])
         # print(table.row_values(i))
@@ -24,9 +24,9 @@ def getData():
     for key in project_num_dic.keys():
         avg_num_dic[key] = people_num_dic[key] / project_num_dic[key]
 
-    print(sorted(project_num_dic.items(), key= lambda item: item[1], reverse=True))
-    # print(sorted(people_num_dic.items(), key= lambda item: item[1], reverse=True))
-    print(sorted(avg_num_dic.items(), key=lambda item: item[1], reverse=False))
+    print("项目数量：" + str(sorted(project_num_dic.items(), key= lambda item: item[1], reverse=True)))
+    print("参与人数" + str(sorted(people_num_dic.items(), key= lambda item: item[1], reverse=True)))
+    print("平均人数" + str(sorted(avg_num_dic.items(), key=lambda item: item[1], reverse=False)))
 
 if __name__ == '__main__':
     getData()
